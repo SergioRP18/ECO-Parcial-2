@@ -65,11 +65,15 @@ export default function renderScreen2(initialData = []) {
 
   // Agrega funcionalidad al botón de reiniciar juego
   if (resetButton) {
-    resetButton.addEventListener("click", () => {
-      socket.emit("reset-game");
-      players = [];
-      renderPlayerList(players);
-      winnerMessage.textContent = "El juego ha sido reiniciado.";
+    resetButton.addEventListener("click", async () => {
+      const result = await makeRequest("/api/game/reset", "POST");
+      if (result.success) {
+        players = [];
+        renderPlayerList(players);
+        winnerMessage.textContent = "El juego ha sido reiniciado.";
+      } else {
+        alert("Error al reiniciar el juego: " + result.error);
+      }
     });
   }
 

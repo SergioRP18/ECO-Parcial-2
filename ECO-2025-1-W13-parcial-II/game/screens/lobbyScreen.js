@@ -26,7 +26,13 @@ export default function renderLobbyScreen(data) {
 
   // Use HTTP request instead of socket.emit
   startButton.addEventListener("click", async () => {
-    await makeRequest("/api/game/start", "POST");
+    const result = await makeRequest("/api/game/validate-results", "POST");
+    if (result.success) {
+      alert("Resultados validados y puntos asignados. Iniciando nuevo juego...");
+      await makeRequest("/api/game/start", "POST");
+    } else {
+      alert("Error al validar los resultados: " + result.error);
+    }
   });
 
   // Keep the socket.on listener for game start event

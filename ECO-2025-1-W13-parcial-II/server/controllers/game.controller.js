@@ -103,10 +103,40 @@ const selectPolo = async (req, res) => {
   }
 };
 
+const validateResults = async (req, res) => {
+  try {
+    const players = playersDb.getAllPlayers();
+
+    // Lógica para validar resultados y asignar puntos
+    players.forEach((player) => {
+      if (player.role === "marco" && player.caughtSpecialPolo) {
+        player.score += 10; // Ejemplo: Marco gana puntos
+      } else if (player.role === "polo-especial" && !player.caughtByMarco) {
+        player.score += 15; // Ejemplo: Polo especial gana puntos
+      }
+    });
+
+    res.status(200).json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const resetGame = async (req, res) => {
+  try {
+    playersDb.resetGame();
+    res.status(200).json({ success: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 module.exports = {
   joinGame,
   startGame,
   notifyMarco,
   notifyPolo,
   selectPolo,
+  validateResults,
+  resetGame,
 };

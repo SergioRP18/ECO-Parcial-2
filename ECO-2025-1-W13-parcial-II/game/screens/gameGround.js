@@ -45,18 +45,10 @@ export default function renderGameGround(data) {
   container.addEventListener("click", async function (event) {
     if (event.target.tagName === "BUTTON") {
       const key = event.target.dataset.key;
-
-      // Verifica si el Polo seleccionado es especial
-      const poloSelected = polos.find((polo) => polo.userId === key);
-      if (poloSelected && poloSelected.role === "polo-especial") {
-        // Polo especial es atrapado
-        socket.emit("updateScores", [
-          {
-            id: poloSelected.userId,
-            caughtByMarco: true, // Polo especial es atrapado
-          },
-        ]);
-      }
+      await makeRequest("/api/game/select-polo", "POST", {
+        socketId: socket.id,
+        poloId: key,
+      });
     }
   });
 
@@ -100,16 +92,4 @@ export default function renderGameGround(data) {
       caughtByMarco: false, // Polo especial no es atrapado
     },
   ]);
-
-  setTimeout(() => {
-    if (myRole === "polo-especial") {
-      // Polo especial no es atrapado
-      socket.emit("updateScores", [
-        {
-          id: socket.id,
-          caughtByMarco: false, // Polo especial no es atrapado
-        },
-      ]);
-    }
-  }, 10000); // Por ejemplo, después de 10 segundos
 }
